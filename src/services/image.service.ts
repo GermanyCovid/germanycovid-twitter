@@ -146,4 +146,36 @@ export namespace ImageService {
         });
     }
 
+    export function createMapImage(type: "districts" | "states") {
+        return new Promise((resolve, reject) => {
+            const canvas = Canvas.createCanvas(1920, 1080);
+            const ctx = canvas.getContext("2d");
+            DataService.getMap(type).then((mapBuffer) => {
+                Promise.all([
+                    Canvas.loadImage("./assets/map_background.png"),
+                    Canvas.loadImage(mapBuffer)
+                ]).then(([background, map]) => {
+                    ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+                    ctx.save();
+                    ctx.drawImage(map, 780, 90, 655, 889);
+
+                    const dateNow = new Date();
+                    addText(ctx, dateNow.getDate() + "." + Number(dateNow.getMonth() + 1) + "." + dateNow.getFullYear(), "white", 70, 1655, 195);
+
+                    fs.writeFileSync("./assets/" + type + ".png", canvas.toBuffer());
+                    resolve(canvas.toBuffer());
+                });
+            });
+        });
+    }
+
+    function addText(ctx: Canvas.CanvasRenderingContext2D, text: string, color: string, size: number, x: number, y: number, weight?: string) {
+        const fontWeight = weight || "bold";
+        ctx.restore();
+        ctx.fillStyle = color;
+        ctx.textAlign = "center";
+        ctx.font = fontWeight + " " + size + "px Poppins";
+        ctx.fillText(text, x, y);
+    }
+
 }

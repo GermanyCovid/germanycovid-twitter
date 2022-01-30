@@ -15,6 +15,8 @@ const httpServer = new http.Server(app);
 
 ImageService.createGermanyImage();
 ImageService.createIntensivRegisterImage();
+ImageService.createMapImage("districts");
+ImageService.createMapImage("states");
 cron.schedule("* 12 * * *", () => {
     console.log("RUNNING");
 }, { timezone: "Europe/Berlin" });
