@@ -1,5 +1,6 @@
 import Twit from "twit";
 import { DataService } from "./data.service";
+import { LogService } from "./log.service";
 
 export namespace TwitterService {
 
@@ -19,7 +20,7 @@ export namespace TwitterService {
                 if (event.in_reply_to_status_id === null) return;
                 if (event.in_reply_to_screen_name === "GermanyCovid") return;
                 const id = event.id_str;
-                console.log("@" + event.user.screen_name + " mentioned us in a tweet.");
+                LogService.logInfo("@" + event.user.screen_name + " mentioned us in a tweet.");
 
                 const mentions: [] = event.entities.user_mentions.filter((value: any) => value.screen_name === "GermanyCovid");
                 if (event.text === "@GermanyCovid" || mentions.length > 1) {
@@ -34,7 +35,7 @@ export namespace TwitterService {
                 }
             });
         } catch (error) {
-            console.log("Connection error to Twitter has occurred.");
+            LogService.logError("Connection error to Twitter has occurred.");
         }
     }
 
@@ -45,13 +46,13 @@ export namespace TwitterService {
             if (!err) {
                 twitter.post("statuses/update", { status, media_ids: [mediaId] }, (err1, data1, response1) => {
                     if (!err1) {
-                        console.log("Posted tweet updated.");
+                        LogService.logInfo("Posted tweet updated.");
                     } else {
-                        console.log("Error while posting tweet update.");
+                        LogService.logError("Error while posting tweet update.");
                     }
                 });
             } else {
-                console.log("Error while uploading media.");
+                LogService.logError("Error while uploading media.");
             }
         });
     }
@@ -73,9 +74,9 @@ export namespace TwitterService {
                 auto_populate_reply_metadata: true
             }, (err, data, response) => {
                 if (!err) {
-                    console.log("An overview of the statistics was sent.");
+                    LogService.logInfo("An overview of the statistics was sent.");
                 } else {
-                    console.log("Error while responding to the mention.");
+                    LogService.logError("Error while responding to the mention.");
                 }
             });
         });
