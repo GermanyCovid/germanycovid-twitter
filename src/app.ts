@@ -8,6 +8,7 @@ ImageService.createGermanyImage();
 ImageService.createIntensivRegisterImage();
 ImageService.createMapImage("districts");
 ImageService.createMapImage("states");
+ImageService.createVaccinationsImage();
 cron.schedule("* 12 * * *", () => {
     console.log("RUNNING");
 }, { timezone: "Europe/Berlin" });

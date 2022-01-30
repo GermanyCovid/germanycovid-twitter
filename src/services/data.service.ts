@@ -4,7 +4,7 @@ export namespace DataService {
 
     const numberFormat = new Intl.NumberFormat("de-DE");
 
-    export function getData(type: "germany" | "vaccinations" | "vaccinations-history" | "intensivregister"): Promise<{ current: any, last: any }> {
+    export function getData(type: "germany" | "vaccinations" | "vaccinations-history-7" | "intensivregister"): Promise<{ current: any, last: any }> {
         return new Promise((resolve, reject) => {
             const now = new Date();
             const lastDate = new Date();
@@ -45,6 +45,30 @@ export namespace DataService {
             change = "+" + numberFormat.format(Number(change));
         }
         return change;
+    }
+
+    export function isHoliday() {
+        const date = new Date();
+        if (date.getDay() === 0 || date.getDay() === 6) return true;
+        if (date.getDate() === 1 && date.getMonth() === 0) {
+            return true;
+        } else if (date.getDate() === 18 && date.getMonth() === 3) {
+            return true;
+        } else if (date.getDate() === 1 && date.getMonth() === 4) {
+            return true;
+        } else if (date.getDate() === 13 && date.getMonth() === 4) {
+            return true;
+        } else if (date.getDate() === 24 && date.getMonth() === 4) {
+            return true;
+        } else if (date.getDate() === 3 && date.getMonth() === 9) {
+            return true;
+        } else if (date.getDate() === 31 && date.getMonth() === 9) {
+            return true;
+        } else if (date.getDate() === 1 && date.getMonth() === 10) {
+            return true;
+        } else if (date.getDate() === 25 && date.getMonth() === 11) {
+            return true;
+        } else return date.getDate() === 26 && date.getMonth() === 11;
     }
 
 }
