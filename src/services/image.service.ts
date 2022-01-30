@@ -90,12 +90,57 @@ export namespace ImageService {
                     1195, 825
                 );
 
-                const change = ((data.last.casesPer100k - data.current.casesPer100k) / data.current.casesPer100k) * 100;
                 image.setElement(
                     numberFormat.format(data.current.casesPer100k),
-                    numberFormat.format(Number(Math.abs(change).toFixed(1))) + "%",
+                    DataService.getPercentageChange(data.last.casesPer100k, data.current.casesPer100k) + "%",
                     1660, 825
                 );
+                resolve(image.build());
+            });
+        });
+    }
+
+    export function createIntensivRegisterImage(): Promise<Buffer> {
+        return new Promise((resolve, reject) => {
+            Promise.all([
+                Canvas.loadImage("./assets/bed_background.png"),
+                DataService.getData("intensivregister")
+            ]).then(([background, allData]) => {
+                const currentData = allData.current.overallSum;
+                const lastData = allData.last.overallSum;
+                const image = new Stats("intensivregister", background);
+
+                image.setElement(
+                    numberFormat.format(currentData.intensivBettenBelegt),
+                    numberFormat.format(currentData.bettenBelegtToBettenGesamtPercent) + "% | " + DataService.getChange(lastData.intensivBettenBelegt - currentData.intensivBettenBelegt),
+                    960, 520, true
+                );
+
+                image.setElement(
+                    numberFormat.format(currentData.faelleCovidAktuell),
+                    numberFormat.format(currentData.covidToIntensivBettenPercent) + "% | " + DataService.getChange(lastData.faelleCovidAktuell - currentData.faelleCovidAktuell),
+                    265, 835
+                );
+
+                image.setElement(
+                    numberFormat.format(currentData.faelleCovidAktuellBeatmet),
+                    numberFormat.format(currentData.faelleCovidAktuellBeatmetToCovidAktuellPercent) + "% | " + DataService.getChange(lastData.faelleCovidAktuellBeatmet - currentData.faelleCovidAktuellBeatmet),
+                    730, 835
+                );
+
+                image.setElement(
+                    numberFormat.format(currentData.intensivBettenFrei),
+                    "von " + numberFormat.format(currentData.intensivBettenGesamt) + " Betten",
+                    1195, 830
+                );
+                image.addText(numberFormat.format(currentData.bettenFreiToBettenGesamtPercent) + "% | " + DataService.getChange(lastData.intensivBettenFrei - currentData.intensivBettenFrei), "white", 22, 1195, 880, "regular");
+
+                image.setElement(
+                    numberFormat.format(currentData.intensivBettenFreiProStandort),
+                    "Vortag: " + numberFormat.format(lastData.intensivBettenFreiProStandort),
+                    1660, 835
+                );
+
                 resolve(image.build());
             });
         });

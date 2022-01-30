@@ -5,6 +5,7 @@ import expressHandlebars from "express-handlebars";
 import cors from "cors";
 import morgan from "morgan";
 import moment from "moment";
+import cron from "node-cron";
 import { ImageService } from "./services/image.service";
 
 dotenv.config();
@@ -13,6 +14,10 @@ const app = express();
 const httpServer = new http.Server(app);
 
 ImageService.createGermanyImage();
+ImageService.createIntensivRegisterImage();
+cron.schedule("* 12 * * *", () => {
+    console.log("RUNNING");
+}, { timezone: "Europe/Berlin" });
 
 morgan.token("date", (req: express.Request, res: express.Response) => {
     return moment().format("DD/MM/YYYY HH:mm:ss");
