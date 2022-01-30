@@ -146,7 +146,7 @@ export namespace ImageService {
         });
     }
 
-    export function createMapImage(type: "districts" | "states") {
+    export function createMapImage(type: "districts" | "states"): Promise<Buffer> {
         return new Promise((resolve, reject) => {
             const canvas = Canvas.createCanvas(1920, 1080);
             const ctx = canvas.getContext("2d");
