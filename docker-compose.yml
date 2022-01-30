@@ -1,0 +1,7 @@
+version: "3.8"
+services:
+    germanycovid-twitter:
+        image: germanycovid-twitter:latest
+        container_name: germanycovid-twitter
+        ports:
+            - "3000:3000"

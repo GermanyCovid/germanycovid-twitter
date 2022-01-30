@@ -1,0 +1,11 @@
+node_modules
+package-lock.json
+.env
+**/*.js
+**/*.jpg
+caches/*
+assets/districts.png
+assets/germany.png
+assets/intensivregister.png
+assets/states.png
+assets/vaccinations.png
