@@ -3,8 +3,4 @@ node_modules
 **/*.js
 **/*.jpg
 caches/*
-assets/districts.png
-assets/germany.png
-assets/intensivregister.png
-assets/states.png
-assets/vaccinations.png
+test/*

@@ -14,6 +14,7 @@ export namespace TwitterService {
     const numberFormat = new Intl.NumberFormat("de-DE");
 
     export function init() {
+        LogService.logInfo("Twitter Bot @GermanyCovid.");
         try {
             const stream = twitter.stream("statuses/filter", { track: ["@GermanyCovid"] });
             stream.on("tweet", async (event) => {

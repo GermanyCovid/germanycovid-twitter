@@ -54,7 +54,7 @@ export namespace ImageService {
 
         build() {
             const buffer = this.canvas.toBuffer();
-            fs.writeFileSync("./assets/" + this.name + ".png", buffer);
+            fs.writeFileSync(process.env.FILE_PATH + "/" + this.name + ".png", buffer);
             return buffer;
         }
     }
@@ -62,7 +62,7 @@ export namespace ImageService {
     export function createGermanyImage(): Promise<Buffer> {
         return new Promise((resolve, reject) => {
             Promise.all([
-                Canvas.loadImage("./assets/cases_background.png"),
+                Canvas.loadImage("./assets/germany_background.png"),
                 DataService.getData("germany")
             ]).then(([background, data]) => {
                 const image = new Stats("germany", background);
@@ -103,7 +103,7 @@ export namespace ImageService {
     export function createIntensivRegisterImage(): Promise<Buffer> {
         return new Promise((resolve, reject) => {
             Promise.all([
-                Canvas.loadImage("./assets/bed_background.png"),
+                Canvas.loadImage("./assets/intensivregister_background.png"),
                 DataService.getData("intensivregister")
             ]).then(([background, allData]) => {
                 const currentData = allData.current.overallSum;
@@ -162,7 +162,7 @@ export namespace ImageService {
                     const dateNow = new Date();
                     addText(ctx, dateNow.getDate() + "." + Number(dateNow.getMonth() + 1) + "." + dateNow.getFullYear(), "white", 70, 1655, 195);
 
-                    fs.writeFileSync("./assets/" + type + ".png", canvas.toBuffer());
+                    fs.writeFileSync(process.env.FILE_PATH + "/" + type + ".png", canvas.toBuffer());
                     resolve(canvas.toBuffer());
                 });
             });

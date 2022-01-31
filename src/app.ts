@@ -1,16 +1,18 @@
 import dotenv from "dotenv";
 dotenv.config();
 import cron from "node-cron";
+import fs from "fs";
 import { ImageService } from "./services/image.service";
 import { LogService } from "./services/log.service";
 import { TwitterService } from "./services/twitter.service";
 
+if (!fs.existsSync(process.env.FILE_PATH)) fs.mkdirSync(process.env.FILE_PATH, { recursive: true });
 TwitterService.init();
 
-ImageService.createGermanyImage();
-ImageService.createIntensivRegisterImage();
-ImageService.createMapImage("districts");
-ImageService.createMapImage("states");
+ImageService.createGermanyImage().catch((err) => LogService.logError(err));
+ImageService.createIntensivRegisterImage().catch((err) => LogService.logError(err));
+ImageService.createMapImage("districts").catch((err) => LogService.logError(err));
+ImageService.createMapImage("states").catch((err) => LogService.logError(err));
 ImageService.createVaccinationsImage().catch((err) => LogService.logError(err));
 
 cron.schedule("0 10 * * *", () => {
