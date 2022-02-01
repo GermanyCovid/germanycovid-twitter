@@ -146,13 +146,13 @@ export namespace ImageService {
         });
     }
 
-    export function createMapImage(type: "districts" | "states"): Promise<Buffer> {
+    export function createMapImage(type: "districts" | "states" | "hospitalization"): Promise<Buffer> {
         return new Promise((resolve, reject) => {
             const canvas = Canvas.createCanvas(1920, 1080);
             const ctx = canvas.getContext("2d");
             DataService.getMap(type).then((mapBuffer) => {
                 Promise.all([
-                    Canvas.loadImage("./assets/map_background.png"),
+                    Canvas.loadImage(type === "hospitalization" ? "./assets/hospitalization_background.png" : "./assets/map_background.png"),
                     Canvas.loadImage(mapBuffer)
                 ]).then(([background, map]) => {
                     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);

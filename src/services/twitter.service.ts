@@ -25,13 +25,13 @@ export namespace TwitterService {
 
                 const mentions: [] = event.entities.user_mentions.filter((value: any) => value.screen_name === "GermanyCovid");
                 if (event.text === "@GermanyCovid" || mentions.length > 1) {
-                    sendMentionReply(id);
+                    sendStatsReply(id);
                 } else {
                     twitter.get("statuses/show/" + event.in_reply_to_status_id_str, (err, result: any, response) => {
                         if (err) return;
                         const replyMentions: [] = result.entities.user_mentions.filter((value: any) => value.screen_name === "GermanyCovid");
                         if (replyMentions.length !== 0) return;
-                        sendMentionReply(id);
+                        sendStatsReply(id);
                     });
                 }
             });
@@ -40,16 +40,38 @@ export namespace TwitterService {
         }
     }
 
-    export function postTweet(status: string, image: Buffer) {
+    export function postTweet(status: string, image: Buffer): Promise<string> {
+        return new Promise((resolve, reject) => {
+            const base64Image = image.toString("base64");
+            twitter.post("media/upload", { media_data: base64Image }, (err, data: any, response) => {
+                const mediaId = data.media_id_string;
+                if (!err) {
+                    twitter.post("statuses/update", { status, media_ids: [mediaId] }, (err1, data1: any, response1) => {
+                        if (!err1) {
+                            LogService.logInfo("Posted tweet updated.");
+                            resolve(data1.id_str);
+                        } else {
+                            LogService.logError("Error while posting tweet update.");
+                            resolve(null);
+                        }
+                    });
+                } else {
+                    LogService.logError("Error while uploading media.");
+                }
+            });
+        });
+    }
+
+    export function sendMentionReply(id: string, status: string, image: Buffer) {
         const base64Image = image.toString("base64");
         twitter.post("media/upload", { media_data: base64Image }, (err, data: any, response) => {
             const mediaId = data.media_id_string;
             if (!err) {
-                twitter.post("statuses/update", { status, media_ids: [mediaId] }, (err1, data1, response1) => {
+                twitter.post("statuses/update", { status, media_ids: [mediaId], in_reply_to_status_id: id, auto_populate_reply_metadata: true }, (err1, data1, response1) => {
                     if (!err1) {
-                        LogService.logInfo("Posted tweet updated.");
+                        LogService.logInfo("Posted tweet reply.");
                     } else {
-                        LogService.logError("Error while posting tweet update.");
+                        LogService.logError("Error while posting tweet reply.");
                     }
                 });
             } else {
@@ -58,7 +80,7 @@ export namespace TwitterService {
         });
     }
 
-    function sendMentionReply(id: string) {
+    function sendStatsReply(id: string) {
         Promise.all([
             DataService.getData("germany"),
             DataService.getData("intensivregister")

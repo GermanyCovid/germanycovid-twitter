@@ -13,33 +13,39 @@ ImageService.createGermanyImage().catch((err) => LogService.logError(err));
 ImageService.createIntensivRegisterImage().catch((err) => LogService.logError(err));
 ImageService.createMapImage("districts").catch((err) => LogService.logError(err));
 ImageService.createMapImage("states").catch((err) => LogService.logError(err));
+ImageService.createMapImage("hospitalization").catch((err) => LogService.logError(err));
 ImageService.createVaccinationsImage().catch((err) => LogService.logError(err));
 
 cron.schedule("0 10 * * *", () => {
-    ImageService.createMapImage("states").then((buffer) => {
+    ImageService.createMapImage("states").then((statesBuffer) => {
         LogService.logInfo("Sending states tweet.");
-        TwitterService.postTweet("► Aktuelle Lage am " + new Date().getDate() + "." + Number(new Date().getMonth()+1) + "." + new Date().getFullYear() + " ◄", buffer);
+        TwitterService.postTweet("► Aktuelle Lage am " + new Date().getDate() + "." + Number(new Date().getMonth() + 1) + "." + new Date().getFullYear() + " ◄", statesBuffer).then((id) => {
+            ImageService.createMapImage("districts").then((buffer) => {
+                LogService.logInfo("Sending districts tweet.");
+                TwitterService.sendMentionReply(id, "► Aktuelle Lage am " + new Date().getDate() + "." + Number(new Date().getMonth() + 1) + "." + new Date().getFullYear() + " ◄", buffer);
+            }).catch((err) => LogService.logError(err));
+        }).catch((err) => LogService.logError(err));
     }).catch((err) => LogService.logError(err));
 }, { timezone: "Europe/Berlin" });
 
 cron.schedule("0 11 * * *", () => {
-    ImageService.createMapImage("districts").then((buffer) => {
-        LogService.logInfo("Sending districts tweet.");
-        TwitterService.postTweet("► Aktuelle Lage am " + new Date().getDate() + "." + Number(new Date().getMonth()+1) + "." + new Date().getFullYear() + " ◄", buffer);
+    ImageService.createMapImage("hospitalization").then((buffer) => {
+        LogService.logInfo("Sending hospitalization tweet.");
+        TwitterService.postTweet("► Aktuelle Lage am " + new Date().getDate() + "." + Number(new Date().getMonth() + 1) + "." + new Date().getFullYear() + " ◄", buffer);
     }).catch((err) => LogService.logError(err));
 }, { timezone: "Europe/Berlin" });
 
 cron.schedule("0 12 * * *", () => {
     ImageService.createGermanyImage().then((buffer) => {
         LogService.logInfo("Sending germany tweet.");
-        TwitterService.postTweet("► Aktuelle Lage am " + new Date().getDate() + "." + Number(new Date().getMonth()+1) + "." + new Date().getFullYear() + " ◄", buffer);
+        TwitterService.postTweet("► Aktuelle Lage am " + new Date().getDate() + "." + Number(new Date().getMonth() + 1) + "." + new Date().getFullYear() + " ◄", buffer);
     }).catch((err) => LogService.logError(err));
 }, { timezone: "Europe/Berlin" });
 
 cron.schedule("0 13 * * *", () => {
     ImageService.createIntensivRegisterImage().then((buffer) => {
         LogService.logInfo("Sending intensivregister tweet.");
-        TwitterService.postTweet("► Intensivstationen am " + new Date().getDate() + "." + Number(new Date().getMonth()+1) + "." + new Date().getFullYear() + " ◄", buffer);
+        TwitterService.postTweet("► Intensivstationen am " + new Date().getDate() + "." + Number(new Date().getMonth() + 1) + "." + new Date().getFullYear() + " ◄", buffer);
     }).catch((err) => LogService.logError(err));
 }, { timezone: "Europe/Berlin" });
 
