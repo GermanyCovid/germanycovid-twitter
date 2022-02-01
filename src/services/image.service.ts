@@ -197,7 +197,7 @@ export namespace ImageService {
                     const expectedDate = new Date();
                     expectedDate.setDate(expectedDate.getDate() + daysNeeded);
 
-                    image.setElement("Nicht verfügbar", "bei erforderlichen 85%", 960, 520, true);
+                    image.setElement(numberFormat.format(data.current.data.administeredVaccinations), numberFormat.format(vaccinated + boosterVaccinated) + " die letzten 7-Tage", 960, 520, true);
                     image.setElement(numberFormat.format(Math.round(r + (boosterVaccinated / 7))), "Heute: " + numberFormat.format(data.current.data.delta + data.current.data.secondVaccination.delta + data.current.data.boosterVaccination.delta), 265, 825);
 
                     image.setElement(numberFormat.format(data.current.data.vaccinated), "+ ~" + numberFormat.format(data.current.data.delta) + " | " + numberFormat.format(Number((data.current.data.quote * 100).toFixed(1))) + "%", 730, 825);
