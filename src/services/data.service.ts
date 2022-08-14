@@ -21,7 +21,7 @@ export namespace DataService {
 
     export function getMap(type: "districts" | "states" | "hospitalization"): Promise<Buffer> {
         return new Promise((resolve, reject) => {
-            axios.get("https://api.corona-zahlen.org/map/" + (type === "hospitalization" ? "states/hospitalization" : type), { responseType: "arraybuffer" })
+            axios.get("https://rki.germanycovid.de/map/" + (type === "hospitalization" ? "states/hospitalization" : type), { responseType: "arraybuffer" })
                 .then((response) => resolve(Buffer.from(response.data, "binary")))
                 .catch((error) => reject(error));
         });
